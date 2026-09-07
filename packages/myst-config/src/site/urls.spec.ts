@@ -14,31 +14,44 @@ describe('resolveSiteUrls', () => {
     ).toEqual({ siteUrl: 'https://example.org/docs', baseUrl: '/docs' });
   });
 
-  it('uses configuration when the override is empty', () => {
-    expect(
-      resolveSiteUrls({
-        url: 'https://example.org/docs/',
-        env: { SITE_URL: '', BASE_URL: '', READTHEDOCS_CANONICAL_URL: 'https://rtd.example.org/' },
-      }),
-    ).toEqual({ siteUrl: 'https://example.org/docs', baseUrl: '/docs' });
-  });
+  it.each([undefined, ''])(
+    'uses configuration before Read the Docs when SITE_URL is %s',
+    (SITE_URL) => {
+      expect(
+        resolveSiteUrls({
+          url: 'https://example.org/docs/',
+          env: { SITE_URL, BASE_URL: '', READTHEDOCS_CANONICAL_URL: 'https://rtd.example.org/' },
+        }),
+      ).toEqual({ siteUrl: 'https://example.org/docs', baseUrl: '/docs' });
+    },
+  );
 
-  it('preserves the full Read the Docs URL with empty overrides', () => {
-    expect(
-      resolveSiteUrls({
-        env: {
-          SITE_URL: '',
-          BASE_URL: '',
-          READTHEDOCS_CANONICAL_URL: 'https://example.org/en/latest/',
-        },
-      }),
-    ).toEqual({ siteUrl: 'https://example.org/en/latest', baseUrl: '/en/latest' });
-  });
+  it.each([undefined, ''])(
+    'preserves the full Read the Docs URL with overrides set to %s',
+    (override) => {
+      expect(
+        resolveSiteUrls({
+          env: {
+            SITE_URL: override,
+            BASE_URL: override,
+            READTHEDOCS_CANONICAL_URL: 'https://example.org/en/latest/',
+          },
+        }),
+      ).toEqual({ siteUrl: 'https://example.org/en/latest', baseUrl: '/en/latest' });
+    },
+  );
 
   it('leaves request fallback to the caller', () => {
     expect(resolveSiteUrls()).toEqual({ siteUrl: undefined, baseUrl: undefined });
     expect(resolveSiteUrls({ env: { BASE_URL: '/docs///' } })).toEqual({
       siteUrl: undefined,
+      baseUrl: '/docs',
+    });
+  });
+
+  it('infers the base path from site.url without environment settings', () => {
+    expect(resolveSiteUrls({ url: 'https://example.org/docs/' })).toEqual({
+      siteUrl: 'https://example.org/docs',
       baseUrl: '/docs',
     });
   });
