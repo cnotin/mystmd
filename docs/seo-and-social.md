@@ -28,9 +28,7 @@ The thumbnail, title and description for your document will also show up in site
 
 ## Site URL
 
-To generate absolute public URLs in `sitemap.xml` and `robots.txt`, set `site.url` in `myst.yml` or set the deployment-time.
-
-`SITE_URL` override to a full URL such as `https://mysite.org/docs`. The path in that URL automatically becomes the deployment base URL; an explicitly configured `BASE_URL` must match it otherwise the build fails.
+To generate absolute public URLs in `sitemap.xml` and `robots.txt`, set `site.url` in `myst.yml` or set the deployment-time `SITE_URL` override to a full URL such as `https://mysite.org/docs`. The path in that URL automatically becomes the deployment base URL; an explicitly configured `BASE_URL` must match it otherwise the build fails.
 
 ## robots.txt
 
@@ -59,7 +57,7 @@ This is a good setting for transient sites or sites that are showing, for exampl
 
 ## sitemap.xml
 
-For a deployable `sitemap.xml`, configure the [Site URL](#site-url)  so page `<loc>` entries and the stylesheet URL point to the public site:
+For a deployable `sitemap.xml`, configure the [Site URL](#site-url) so page `<loc>` entries and the stylesheet URL point to the public site:
 
 The `sitemap.xml` is always created and is accessible through [sitemap.xml](/sitemap.xml), which lists all of the pages in your site, including any nested projects. This XML Sitemap is generated automatically to make your content more visible for search engines.
 
