@@ -137,6 +137,7 @@ function rewriteAssetsFolder(directory: string, baseurl?: string): void {
  */
 function getSiteUrl(session: ISession): string | undefined {
   const siteConfig = selectors.selectCurrentSiteConfig(session.store.getState());
+  // SITE_URL always takes precedence. If it is not defined, use site.url or the Read the Docs URL.
   const value = process.env.SITE_URL ?? siteConfig?.url ?? process.env.READTHEDOCS_CANONICAL_URL;
   if (!value) return undefined;
   let url: URL;
@@ -169,6 +170,7 @@ function normalizeBaseUrl(value?: string): string | undefined {
  */
 function getBaseUrl(session: ISession): string | undefined {
   const siteUrl = getSiteUrl(session);
+  // BASE_URL takes precedence; otherwise use the deployment path in the configured public site URL.
   const inferredBaseUrl = siteUrl
     ? new URL(siteUrl).pathname.replace(/\/+$/, '') || undefined
     : undefined;
@@ -178,6 +180,7 @@ function getBaseUrl(session: ISession): string | undefined {
     throw new Error(`BASE_URL (${baseUrl ?? '/'}) conflicts with the path in ${siteUrl}`);
   }
   const resolvedBaseUrl = baseUrl ?? inferredBaseUrl;
+  // Report the resolved base URL, or explain how to configure one when neither source is set.
   if (resolvedBaseUrl) {
     session.log.info(`Building the site with a baseurl of "${resolvedBaseUrl}"`);
   } else if (siteUrl) {
