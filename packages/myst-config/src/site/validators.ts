@@ -18,6 +18,7 @@ import {
   validateSiteFrontmatterKeys,
 } from 'myst-frontmatter';
 import type { SiteAction, SiteConfig, SiteNavItem, SiteProject } from './types.js';
+import { normalizeSiteUrl } from './urls.js';
 
 export const SITE_CONFIG_KEYS = {
   optional: [...SITE_FRONTMATTER_KEYS, 'projects', 'nav', 'actions', 'domains', 'url', 'template'],
@@ -27,19 +28,11 @@ export const SITE_CONFIG_KEYS = {
 export function validateSiteUrl(input: any, opts: ValidationOptions): string | undefined {
   const value = validateString(input, opts);
   if (!defined(value)) return undefined;
-  let url: URL;
   try {
-    url = new URL(value);
-  } catch {
-    return validationError('must be an absolute URL', opts);
+    return normalizeSiteUrl(value);
+  } catch (error) {
+    return validationError((error as Error).message, opts);
   }
-  if (!['http:', 'https:'].includes(url.protocol)) {
-    return validationError('must use the http or https protocol', opts);
-  }
-  if (url.search || url.hash) {
-    return validationError('must not include a query string or fragment', opts);
-  }
-  return url.href.replace(/\/+$/, '');
 }
 
 function validateUrlOrPath(input: any, opts: ValidationOptions) {

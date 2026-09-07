@@ -24,6 +24,7 @@ describe('deployment URLs', () => {
     vi.stubEnv('SITE_URL', 'https://example.org/');
     vi.stubEnv('BASE_URL', '/docs');
     expect(() => getBaseUrl(session())).toThrow(/conflicts/);
+    expect(() => getSiteUrl(session())).toThrow(/conflicts/);
   });
 
   it('allows an explicit root BASE_URL with a root site URL', () => {
