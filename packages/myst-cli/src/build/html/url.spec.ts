@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ISession } from '../../session/types.js';
-import { getBaseUrl, getSiteUrl } from './url.js';
+import { getBaseUrl, getSiteUrl } from './index.js';
+
+vi.mock('../site/start.js', () => ({ startServer: vi.fn() }));
+vi.mock('../site/template.js', () => ({ getSiteTemplate: vi.fn() }));
+vi.mock('../../utils/copyStaticFiles.js', () => ({ copyStaticFiles: vi.fn() }));
 
 vi.mock('../../store/index.js', () => ({
   selectors: { selectCurrentSiteConfig: (state: unknown) => state },
